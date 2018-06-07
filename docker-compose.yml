@@ -65,6 +65,12 @@ services:
             - ../:/var/www
         working_dir: /var/www
         tty: true
+    node-test:
+        image: node:8.6-alpine
+        volumes:
+            - ../node-test:/var/www
+        working_dir: /var/www
+        tty: true
         ports:
             - "8124:8124"
     elasticsearch:
