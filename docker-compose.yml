@@ -5,7 +5,7 @@ services:
             context: ./
             dockerfile: docker/nginx.docker
         volumes:
-            - ./www:/var/www
+            - ../:/var/www
             - ./docker/nginx/ssl:/etc/nginx/ssl
         ports:
             - "8080:443"
@@ -16,7 +16,7 @@ services:
             context: ./
             dockerfile: docker/php-fpm.docker
         volumes:
-            - ./www:/var/www
+            - ../:/var/www
         links:
             - mysql
             - redis
@@ -32,7 +32,7 @@ services:
             context: ./
             dockerfile: docker/php-cli.docker
         volumes:
-            - ./www:/var/www
+            - ../:/var/www
         links:
             - mysql
             - redis
@@ -62,7 +62,7 @@ services:
     node:
         image: node:8.6-alpine
         volumes:
-            - ./www:/var/www
+            - ../:/var/www
         working_dir: /var/www
         tty: true
     elasticsearch:
