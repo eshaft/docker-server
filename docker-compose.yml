@@ -61,7 +61,9 @@ services:
         ports:
             - "63791:6379"
     node:
-        image: node:8.6-alpine
+        build:
+            context: ./
+            dockerfile: docker/node.docker
         volumes:
             - ../:/var/www
         working_dir: /var/www
