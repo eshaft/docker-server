@@ -1,5 +1,1 @@
-FROM node:8.6-alpine
-
-RUN apk update && \
-    apk upgrade && \
-    apk add make libpng-dev
+FROM node:8
