@@ -1,21 +1,22 @@
 version: '2'
 services:
     nginx:
-        build:
-            context: ./
-            dockerfile: docker/nginx.docker
+        image: nginx:latest
         volumes:
             - ../:/var/www
+            - ./docker/nginx/hosts:/etc/nginx/conf.d
             - ./docker/nginx/ssl:/etc/nginx/ssl
+            - ./logs/nginx:/var/log/nginx
         ports:
             - "443:443"
             - "80:80"
         links:
-            - php-fpm
-    php-fpm:
+            - php
+        working_dir: /var/www
+    php:
         build:
             context: ./
-            dockerfile: docker/php-fpm.docker
+            dockerfile: docker/php-fpm71/php-fpm71.docker
         volumes:
             - ../:/var/www
         links:
@@ -28,27 +29,12 @@ services:
             - "REDIS_PORT=6379"
             - "REDIS_HOST=redis"
             - "ELASTICSEARCH_HOSTS=elasticsearch:9200"
-    php-cli:
-        build:
-            context: ./
-            dockerfile: docker/php-cli.docker
-        volumes:
-            - ../:/var/www
-        links:
-            - mysql
-            - redis
-            - elasticsearch
-        environment:
-            - "DB_PORT=3306"
-            - "DB_HOST=mysql"
-            - "REDIS_PORT=6379"
-            - "REDIS_HOST=redis"
-            - "ELASTICSEARCH_HOSTS=elasticsearch:9200"
-        tty: true
+        working_dir: /var/www
     mysql:
         image: mysql:5.7
         volumes:
             - ./mysql:/var/lib/mysql
+            - ../:/var/www
         environment:
             - "MYSQL_ROOT_PASSWORD=secret"
             - "MYSQL_USER=app"
