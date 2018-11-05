@@ -1,4 +1,4 @@
-version: '2'
+version: '3.2'
 services:
     nginx:
         image: nginx:latest
@@ -16,9 +16,35 @@ services:
     php:
         build:
             context: ./
-            dockerfile: docker/php-fpm71/php-fpm71.docker
+            dockerfile: docker/php-fpm/php-fpm.docker
+        user: "${USER_ID:-1000}:${GROUP_ID:-1000}"
+        volumes:
+            - /etc/passwd:/etc/passwd:ro
+            - /etc/group:/etc/group:ro
+            - ../:/var/www:rw
+        links:
+            - mysql
+            - redis
+            - elasticsearch
+        environment:
+            DB_PORT: "3306"
+            DB_HOST: "mysql"
+            REDIS_PORT: "6379"
+            REDIS_HOST: "redis"
+            ELASTICSEARCH_HOSTS: "elasticsearch:9200"
+        working_dir: /var/www
+    apache-php:
+        build:
+            context: ./
+            dockerfile: docker/apache-php/apache-php.docker
+        ports:
+            - "8081:80"
+            - "4431:443"
         volumes:
             - ../:/var/www
+            - ./docker/apache-php/hosts:/etc/apache2/sites-enabled
+            - ./docker/apache-php/logs:/var/log/apache2
+            - ./docker/apache-php/ssl:/usr/home/ssl
         links:
             - mysql
             - redis
@@ -49,19 +75,11 @@ services:
     node:
         build:
             context: ./
-            dockerfile: docker/node.docker
+            dockerfile: docker/node8/node8.docker
         volumes:
             - ../:/var/www
         working_dir: /var/www
         tty: true
-    node-test:
-        image: node:8.6-alpine
-        volumes:
-            - ../node-test:/var/www
-        working_dir: /var/www
-        tty: true
-        ports:
-            - "8124:8124"
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:6.2.2
         environment:

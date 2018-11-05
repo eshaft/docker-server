@@ -1,10 +1,10 @@
-FROM php:7.1-fpm
+FROM php:7.2-fpm
 
 RUN apt-get update && apt-get install -y gnupg2 \
     && curl -sL https://deb.nodesource.com/setup_8.x | bash -
 
-RUN apt-get update && apt-get install -y libmcrypt-dev mysql-client git zlib1g-dev libpng-dev libldap2-dev nodejs wget libpq-dev \
-    && docker-php-ext-install mcrypt pdo_mysql pdo_pgsql pcntl gd zip ldap
+RUN apt-get update && apt-get install -y mysql-client git zlib1g-dev libpng-dev libldap2-dev nodejs wget libpq-dev \
+    && docker-php-ext-install pdo_mysql pdo_pgsql pcntl gd zip ldap
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -14,4 +14,4 @@ RUN pecl install xdebug-2.6.1 \
 RUN pecl -v install rar \
     && docker-php-ext-enable rar
 
-ADD ./docker/php-fpm71/php.ini /usr/local/etc/php/conf.d/40-custom.ini
+ADD ./docker/php-fpm/php.ini /usr/local/etc/php/conf.d/40-custom.ini

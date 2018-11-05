@@ -1,0 +1,28 @@
+FROM php:7.2-apache
+
+RUN apt-get update && apt-get install -y \
+        curl \
+        wget \
+        git \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libpng-dev \     
+        libmemcached-dev \
+        zlib1g-dev \    
+    && docker-php-ext-install -j$(nproc) mbstring mysqli pdo_mysql zip \
+    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-install -j$(nproc) gd
+
+RUN a2enmod rewrite \
+    && a2enmod ssl \
+    && /etc/init.d/apache2 restart
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN pecl install xdebug-2.6.1 \
+    && docker-php-ext-enable xdebug
+
+RUN pecl -v install rar \
+    && docker-php-ext-enable rar
+
+ADD ./docker/apache-php/php.ini /usr/local/etc/php/conf.d/40-custom.ini
