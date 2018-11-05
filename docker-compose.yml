@@ -5,7 +5,7 @@ services:
         volumes:
             - ../:/var/www
             - ./docker/nginx/hosts:/etc/nginx/conf.d
-            - ./docker/nginx/ssl:/etc/nginx/ssl
+            - /etc/letsencrypt/live:/etc/nginx/ssl
             - ./logs/nginx:/var/log/nginx
         ports:
             - "443:443"
