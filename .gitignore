@@ -1,0 +1,11 @@
+mysql/
+mongo/
+logs/mysql57/
+logs/nginx/
+elasticsearch/
+docker/apache-php/hosts/
+docker/apache-php/logs/
+docker/apache-php/ssl/
+docker/nginx/hosts/
+docker/nginx/ssl/
+

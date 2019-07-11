@@ -3,7 +3,6 @@ services:
     nginx:
         image: nginx:latest
         volumes:
-            - ../:/var/www
             - ./docker/nginx/hosts:/etc/nginx/conf.d
             - ./docker/nginx/ssl:/etc/nginx/ssl
             - ./logs/nginx:/var/log/nginx
@@ -12,16 +11,12 @@ services:
             - "80:80"
         links:
             - php
-        working_dir: /var/www
     php:
         build:
             context: ./
             dockerfile: docker/php-fpm/php-fpm.docker
-        user: "${USER_ID:-1000}:${GROUP_ID:-1000}"
         volumes:
-            - /etc/passwd:/etc/passwd:ro
-            - /etc/group:/etc/group:ro
-            - ../:/var/www:rw
+            - ../:/var/www
         links:
             - mysql
             - redis
@@ -67,11 +62,17 @@ services:
             - "MYSQL_PASSWORD=secret"
             - "MYSQL_DATABASE=app"
         ports:
-            - "33061:3306"
+            - "3306:3306"
+    mongo: 
+        image: mongo:3
+        ports:
+            - "27017:27017"
+        volumes:
+            - ./mongo:/data/db
     redis:
         image: redis:3.0
         ports:
-            - "63791:6379"
+            - "6379:6379"
     node:
         build:
             context: ./
@@ -92,4 +93,4 @@ services:
         volumes:
             - ./elasticsearch:/usr/share/elasticsearch/data
         ports:
-            - "9201:9200"
+            - "9200:9200"
