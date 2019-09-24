@@ -28,4 +28,7 @@ RUN pecl install xdebug-2.6.1 \
 RUN pecl -v install rar \
     && docker-php-ext-enable rar
 
+RUN pecl install mongodb \
+    && docker-php-ext-enable mongodb
+
 ADD ./docker/apache-php/php.ini /usr/local/etc/php/conf.d/40-custom.ini

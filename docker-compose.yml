@@ -1,8 +1,9 @@
 version: '3.2'
 services:
     nginx:
-        image: nginx:latest
+        image: nginx:stable
         volumes:
+            - ../:/var/www
             - ./docker/nginx/hosts:/etc/nginx/conf.d
             - ./docker/nginx/ssl:/etc/nginx/ssl
             - ./logs/nginx:/var/log/nginx
@@ -11,6 +12,7 @@ services:
             - "80:80"
         links:
             - php
+        restart: always
     php:
         build:
             context: ./
@@ -28,6 +30,7 @@ services:
             REDIS_HOST: "redis"
             ELASTICSEARCH_HOSTS: "elasticsearch:9200"
         working_dir: /var/www
+        restart: always
     apache-php:
         build:
             context: ./
@@ -51,6 +54,7 @@ services:
             - "REDIS_HOST=redis"
             - "ELASTICSEARCH_HOSTS=elasticsearch:9200"
         working_dir: /var/www
+        restart: always
     mysql:
         image: mysql:5.7
         volumes:
@@ -63,16 +67,24 @@ services:
             - "MYSQL_DATABASE=app"
         ports:
             - "3306:3306"
+        restart: always
     mongo: 
         image: mongo:3
         ports:
             - "27017:27017"
         volumes:
             - ./mongo:/data/db
+        restart: always
+    mongo-express:
+        image: mongo-express
+        ports:
+            - 8082:8081
+        restart: always
     redis:
         image: redis:3.0
         ports:
             - "6379:6379"
+        restart: always
     node:
         build:
             context: ./
@@ -81,6 +93,7 @@ services:
             - ../:/var/www
         working_dir: /var/www
         tty: true
+        restart: always
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:6.2.2
         environment:
@@ -94,3 +107,4 @@ services:
             - ./elasticsearch:/usr/share/elasticsearch/data
         ports:
             - "9200:9200"
+        restart: always
