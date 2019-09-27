@@ -27,4 +27,9 @@ RUN cd /tmp/ \
 #RUN pecl -v install rar \
 #    && docker-php-ext-enable rar
 
+RUN docker-php-source extract \
+    && git clone --branch 1.5.2 --depth 1 https://github.com/mongodb/mongo-php-driver.git /usr/src/php/ext/mongodb \
+    && cd /usr/src/php/ext/mongodb && git submodule update --init \
+    && docker-php-ext-install mongodb
+
 ADD ./docker/php-fpm/php.ini /usr/local/etc/php/conf.d/40-custom.ini
